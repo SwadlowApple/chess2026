@@ -56,7 +56,53 @@ public class Piece {
     //if the piece capture into it legally.
     public ArrayList<Square> getControlledSquares(Square[][] board, Square start) {
         ArrayList<Square> jumpSquares = new ArrayList<>();
-        return jumpSquares;
+        ArrayList<Square> allSquares = new ArrayList<>();
+        Square b = start;
+        int m = 0;
+        int count = 0;
+        int y = 0;
+        int rowMod = -1;
+        int colMod = -1;
+        while(m==0) {
+            for (int z = 0; z<=3; z++) {
+                //up and to the left is in bounds for taking jumps
+                if(b.getRow()+(2*rowMod)>=0 && b.getCol()+(2*colMod)>=0 && b.getRow()+(2*rowMod)<=7 && b.getCol()+(2*colMod)<=7){
+                    //there is a piece of opposite color down and to the right of us and no piece preventing a jump
+                    if(board.getSquareArray()[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && board.getSquareArray()[b.getRow()+rowMod][b.getCol()+colMod].getOccupyingPiece().getColor()!=color && !board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
+                        for (int x = 0; x < jumpSquares.size(); x++) {
+                            if(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==jumpSquares.get(x)) {
+                                y++;
+                            }
+                            else if(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==board.getSquareArray()[start.getRow()][start.getCol()]) {
+                                y++;
+                            }
+                        }
+                        if (y == 0) {
+                            System.out.println("h");
+                            jumpSquares.add(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]);
+                            allSquares.add(board.getSquareArray()[b.getRow()+(rowMod)][b.getCol()+(colMod)]);
+                        }
+                        y =0;
+                    }
+                    if (colMod == 1 && king) {
+                        colMod = -1;
+                        rowMod = 1;
+                    }
+                    else {
+                        colMod = 1;
+                        System.out.println("well?");
+                    }
+                }
+            }
+            if (count == jumpSquares.size()) {
+                m++;
+            }
+            else {
+                b = jumpSquares.get(count);
+            }
+            count++;
+        }
+     return allSquares;
     }
     
 
