@@ -16,10 +16,16 @@ public class Piece {
     private boolean jumped = false;
     private final boolean color;
     private BufferedImage img;
+    private int mod;
     
     public Piece(boolean isWhite, String img_file) {
         this.color = isWhite;
-         
+         if (isWhite) {
+            mod = -1;
+         }
+         else {
+            mod = 1;
+         }
         try {
             if (this.img == null) {
                 System.out.println("trying to open "+img_file);
@@ -61,35 +67,35 @@ public class Piece {
         int m = 0;
         int count = 0;
         int y = 0;
-        int rowMod = -1;
-        int colMod = -1;
+        int rowMod = -1 * mod;
+        int colMod = -1 * mod;
         while(m==0) {
             for (int z = 0; z<=3; z++) {
                 //up and to the left is in bounds for taking jumps
                 if(b.getRow()+(2*rowMod)>=0 && b.getCol()+(2*colMod)>=0 && b.getRow()+(2*rowMod)<=7 && b.getCol()+(2*colMod)<=7){
                     //there is a piece of opposite color down and to the right of us and no piece preventing a jump
-                    if(board.getSquareArray()[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && board.getSquareArray()[b.getRow()+rowMod][b.getCol()+colMod].getOccupyingPiece().getColor()!=color && !board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
+                    if(board[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && board[b.getRow()+rowMod][b.getCol()+colMod].getOccupyingPiece().getColor()!=color && !board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
                         for (int x = 0; x < jumpSquares.size(); x++) {
-                            if(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==jumpSquares.get(x)) {
+                            if(board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==jumpSquares.get(x)) {
                                 y++;
                             }
-                            else if(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==board.getSquareArray()[start.getRow()][start.getCol()]) {
+                            else if(board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==board[start.getRow()][start.getCol()]) {
                                 y++;
                             }
                         }
                         if (y == 0) {
                             System.out.println("h");
-                            jumpSquares.add(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]);
-                            allSquares.add(board.getSquareArray()[b.getRow()+(rowMod)][b.getCol()+(colMod)]);
+                            jumpSquares.add(board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]);
+                            allSquares.add(board[b.getRow()+(rowMod)][b.getCol()+(colMod)]);
                         }
                         y =0;
                     }
-                    if (colMod == 1 && king) {
-                        colMod = -1;
-                        rowMod = 1;
+                    if (colMod == (1*mod) && king) {
+                        colMod = -1*mod;
+                        rowMod = 1*mod;
                     }
                     else {
-                        colMod = 1;
+                        colMod = (1*mod);
                         System.out.println("well?");
                     }
                 }
@@ -119,8 +125,8 @@ public class Piece {
         int m = 0;
         int count = 0;
         int y = 0;
-        int rowMod = -1;
-        int colMod = -1;
+        int rowMod = -1*mod;
+        int colMod = -1*mod;
         while(m==0) {
             for (int z = 0; z<=3; z++) {
                 //up and to the left is in bounds for taking jumps
@@ -142,12 +148,12 @@ public class Piece {
                         }
                         y =0;
                     }
-                    if (colMod == 1 && king) {
-                        colMod = -1;
-                        rowMod = 1;
+                    if (colMod == (1*mod) && king) {
+                        colMod = -1*mod;
+                        rowMod = 1*mod;
                     }
                     else {
-                        colMod = 1;
+                        colMod = 1*mod;
                         System.out.println("well?");
                     }
                 }
@@ -160,8 +166,8 @@ public class Piece {
             }
             count++;
         }
-        colMod = -1;
-        rowMod = -1;
+        colMod = -1*mod;
+        rowMod = -1*mod;
         if (jumpSquares.size() == 0) {
             for (int x = 0; x<=3; x++) {
         if (start.getRow()+rowMod>=0 && start.getCol()+colMod>=0); {
@@ -171,15 +177,15 @@ public class Piece {
             allSquares.add(board.getSquareArray()[start.getRow()+rowMod][start.getCol()+colMod]); 
             }
         }
-        if (colMod == 1 && king) {
-                        colMod = -1;
-                        rowMod = 1;
+        if (colMod == (1*mod) && king) {
+                        colMod = (-1*mod);
+                        rowMod = (1*mod);
                     }
-                    else if (colMod == 1) {
+                    else if (colMod == (1*mod)) {
                         x+=2;
                     }
                     else {
-                        colMod = 1;
+                        colMod = (1*mod);
                         System.out.println("annie r u ok");
                     }
     }
