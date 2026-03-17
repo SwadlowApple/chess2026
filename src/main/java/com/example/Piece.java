@@ -55,6 +55,28 @@ public class Piece {
         
         g.drawImage(this.img, x, y, null);
     }
+    public Boolean canJump(Square[][] board, Square start) {
+        Square b = start;
+        int rowMod = -1 * mod;
+        int colMod = -1 * mod;
+            for (int z = 0; z<=3; z++) {
+                //up and to the left is in bounds for taking jumps
+                if(b.getRow()+(2*rowMod)>=0 && b.getCol()+(2*colMod)>=0 && b.getRow()+(2*rowMod)<=7 && b.getCol()+(2*colMod)<=7){
+                    //there is a piece of opposite color down and to the right of us and no piece preventing a jump
+                    if(board[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && board[b.getRow()+rowMod][b.getCol()+colMod].getOccupyingPiece().getColor()!=color && !board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
+                        return true;
+                    }
+                }
+                if (colMod == (1*mod) && king) {
+                    colMod = -1*mod;
+                    rowMod = 1*mod;
+                }
+                else {
+                    colMod = (1*mod);
+                }
+            }
+    return false;
+}
     
     
     // TO BE IMPLEMENTED!
@@ -90,14 +112,14 @@ public class Piece {
                         }
                         y =0;
                     }
-                    if (colMod == (1*mod) && king) {
-                        colMod = -1*mod;
-                        rowMod = 1*mod;
-                    }
-                    else {
-                        colMod = (1*mod);
-                        System.out.println("well?");
-                    }
+                }
+                if (colMod == (1*mod) && king) {
+                    colMod = -1*mod;
+                    rowMod = 1*mod;
+                }
+                else {
+                    colMod = (1*mod);
+                    System.out.println("well?");
                 }
             }
             if (count == jumpSquares.size()) {
@@ -148,14 +170,14 @@ public class Piece {
                         }
                         y =0;
                     }
-                    if (colMod == (1*mod) && king) {
-                        colMod = -1*mod;
-                        rowMod = 1*mod;
-                    }
-                    else {
-                        colMod = 1*mod;
-                        System.out.println("well?");
-                    }
+                }
+                if (colMod == (1*mod) && king) {
+                    colMod = -1*mod;
+                    rowMod = 1*mod;
+                }
+                else {
+                    colMod = 1*mod;
+                    System.out.println("well?");
                 }
             }
             if (count == jumpSquares.size()) {
@@ -170,26 +192,26 @@ public class Piece {
         rowMod = -1*mod;
         if (jumpSquares.size() == 0) {
             for (int x = 0; x<=3; x++) {
-        if (start.getRow()+rowMod>=0 && start.getCol()+colMod>=0); {
-            if (board.getSquareArray()[start.getRow()+rowMod][start.getCol()+colMod].isOccupied()) {
-            }
-            else {
-            allSquares.add(board.getSquareArray()[start.getRow()+rowMod][start.getCol()+colMod]); 
-            }
-        }
-        if (colMod == (1*mod) && king) {
-                        colMod = (-1*mod);
-                        rowMod = (1*mod);
-                    }
-                    else if (colMod == (1*mod)) {
-                        x+=2;
+                if (start.getRow()+rowMod>=0 && start.getCol()+colMod>=0 && start.getRow()+rowMod<=7 && start.getCol()+colMod<=7); {
+                    if (board.getSquareArray()[start.getRow()+rowMod][start.getCol()+colMod].isOccupied()) {
                     }
                     else {
-                        colMod = (1*mod);
-                        System.out.println("annie r u ok");
+                        allSquares.add(board.getSquareArray()[start.getRow()+rowMod][start.getCol()+colMod]); 
                     }
-    }
-    }
-     return allSquares;
+                }
+                if (colMod == (1*mod) && king) {
+                    colMod = (-1*mod);
+                    rowMod = (1*mod);
+                }
+                else if (colMod == (1*mod)) {
+                    x+=2;
+                }
+                else {
+                    colMod = (1*mod);
+                    System.out.println("annie r u ok");
+                }
+            }
+        }
+        return allSquares;
     }
 }
