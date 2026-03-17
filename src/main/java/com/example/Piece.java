@@ -129,6 +129,8 @@ public class Piece {
                 b = jumpSquares.get(count);
             }
             count++;
+            rowMod = -1*mod;
+            colMod = -1*mod;
         }
      return allSquares;
     }
@@ -159,9 +161,6 @@ public class Piece {
                             if(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==jumpSquares.get(x)) {
                                 y++;
                             }
-                            else if(board.getSquareArray()[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==board.getSquareArray()[start.getRow()][start.getCol()]) {
-                                y++;
-                            }
                         }
                         if (y == 0) {
                             System.out.println("h");
@@ -187,6 +186,8 @@ public class Piece {
                 b = jumpSquares.get(count);
             }
             count++;
+            rowMod = -1*mod;
+            colMod = -1*mod;
         }
         colMod = -1*mod;
         rowMod = -1*mod;
