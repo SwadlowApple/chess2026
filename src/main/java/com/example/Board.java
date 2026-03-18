@@ -168,6 +168,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if (repStop == 0) {
             checker = fromMoveSquare;
         }
+        else {
+            System.out.println("4");
+        }
         if (sq.isOccupied()) {
             currPiece = sq.getOccupyingPiece();
             for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)) {
@@ -195,68 +198,91 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 s.setBorder(null);
             }
         }
-        canJump = currPiece.canJump(board, checker);
+        
         //using currPiece
         if(fromMoveSquare != null) {
+            canJump = currPiece.canJump(board, checker);
             if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && fromMoveSquare == checker && whiteTurn == currPiece.getColor()) {
                 if (canJump) {
                     repStop = 1;
-                    while(repStop == 1) {
-                        System.out.println("a");
-                        if (currPiece.canJump(board, checker)) {
-                            System.out.println("b");
-                            if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[checker.getRow()+2][checker.getCol()+2]) {
-                                endSquare.put(currPiece);
-                                fromMoveSquare.removePiece();
-                                board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1].removePiece();
-                                checker = endSquare;
-                                checker.setDisplay(true);
-                                currPiece = null;
-                                repaint();
+                            if (currPiece != null && currPiece.canJump(board, checker)) {
+                                if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[checker.getRow()+2][checker.getCol()+2]) {
+                                    System.out.println("1");
+                                    endSquare.put(currPiece);
+                                    fromMoveSquare.removePiece();
+                                    board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1].removePiece();
+                                    checker = endSquare;
+                                    checker.setDisplay(true);
+                                    //currPiece = null;
+                                    repaint();
+                                    if (!currPiece.canJump(board, endSquare)) {
+                                        System.out.println("2");
+                                        repStop = 0;
+                                    }
+                                }
+                                else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()+2]) {
+                                    System.out.println("1");
+                                    endSquare.put(currPiece);
+                                    fromMoveSquare.removePiece();
+                                    board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1].removePiece();
+                                    checker = endSquare;
+                                    checker.setDisplay(true);
+                                    //currPiece = null;
+                                    repaint();
+                                    if (!currPiece.canJump(board, endSquare)) {
+                                        System.out.println("2");
+                                        repStop = 0;
+                                    }
+                                }
+                                else if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()-2]) {
+                                    System.out.println("1");
+                                    endSquare.put(currPiece);
+                                    fromMoveSquare.removePiece();
+                                    board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1].removePiece();
+                                    checker = endSquare;
+                                    checker.setDisplay(true);
+                                    //currPiece = null;
+                                    repaint();
+                                    if (!currPiece.canJump(board, endSquare)) {
+                                        System.out.println("2");
+                                        repStop = 0;
+                                    }
+                                }
+                                else if(fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()-2]) {
+                                    System.out.println("1");
+                                    endSquare.put(currPiece);
+                                    fromMoveSquare.removePiece();
+                                    board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1].removePiece();
+                                    checker = endSquare;
+                                    checker.setDisplay(true);
+                                    //currPiece = null;
+                                    repaint();
+                                    if (!currPiece.canJump(board, endSquare)) {
+                                        System.out.println("2");
+                                        repStop = 0;
+                                    }
+                                }
                             }
-                            else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()+2]) {
-                                endSquare.put(currPiece);
-                                fromMoveSquare.removePiece();
-                                board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1].removePiece();
-                                checker = endSquare;
-                                checker.setDisplay(true);
-                                currPiece = null;
-                                repaint();
+                            else {
+                                repStop = 0;
                             }
-                            else if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()-2]) {
-                                endSquare.put(currPiece);
-                                fromMoveSquare.removePiece();
-                                board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1].removePiece();
-                                checker = endSquare;
-                                checker.setDisplay(true);
-                                currPiece = null;
-                                repaint();
-                            }
-                            else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()-2]) {
-                                endSquare.put(currPiece);
-                                fromMoveSquare.removePiece();
-                                board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1].removePiece();
-                                checker = endSquare;
-                                checker.setDisplay(true);
-                                currPiece = null;
-                                repaint();
-                            }
-                        }
-                        else {
-                            repStop = 0;
-                        }
-                    }
                 }
                 else {
                     endSquare.put(currPiece);
-                fromMoveSquare.removePiece();
+                    fromMoveSquare.removePiece();
                 }
-                if (whiteTurn) {
+                if (whiteTurn && repStop == 0) {
                     whiteTurn = false;
                 }
-                else {
+                else if (repStop == 0) {
                     whiteTurn = true;
                 }
+                if (((endSquare.getRow() == 0 && !currPiece.getColor()) || (endSquare.getRow() == 8 && currPiece.getColor())) && repStop == 0) {
+                    currPiece.crown();
+                }
+            }
+            else {
+                System.out.println("5");
             }
         }
        
