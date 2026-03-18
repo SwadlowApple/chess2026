@@ -50,6 +50,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     //if the player is currently dragging a piece this variable contains it.
     Piece currPiece;
     private Square fromMoveSquare;
+    private Square checker;
     
     //used to keep track of the x/y coordinates of the mouse.
     private int currX;
@@ -164,7 +165,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         Square sq = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
         fromMoveSquare = sq;
-        if (sq.isOccupied()&& repStop == 0) {
+        if (repStop == 0) {
+            checker = fromMoveSquare;
+        }
+        if (sq.isOccupied()) {
             currPiece = sq.getOccupyingPiece();
             for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)) {
                 s.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, Color.blue));
@@ -172,11 +176,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             for(Square s: currPiece.getControlledSquares(board, fromMoveSquare)) {
                 s.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.red));
             }
-            fromMoveSquare = sq;
             if (currPiece.getColor() != whiteTurn)
                 return;
             sq.setDisplay(false);
-            System.out.println("3");
         }
         repaint();
     }
@@ -193,37 +195,51 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 s.setBorder(null);
             }
         }
-        canJump = currPiece.canJump(board, fromMoveSquare);
+        canJump = currPiece.canJump(board, checker);
         //using currPiece
         if(fromMoveSquare != null) {
-            if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && whiteTurn == currPiece.getColor()&& repStop == 0) {
+            if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && fromMoveSquare == checker && whiteTurn == currPiece.getColor()) {
                 if (canJump) {
                     repStop = 1;
                     while(repStop == 1) {
-                        if (currPiece.canJump(board, fromMoveSquare)) {
-                            if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()+2]) {
+                        System.out.println("a");
+                        if (currPiece.canJump(board, checker)) {
+                            System.out.println("b");
+                            if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[checker.getRow()+2][checker.getCol()+2]) {
                                 endSquare.put(currPiece);
                                 fromMoveSquare.removePiece();
                                 board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1].removePiece();
-                                fromMoveSquare = endSquare;
+                                checker = endSquare;
+                                checker.setDisplay(true);
+                                currPiece = null;
+                                repaint();
                             }
                             else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()+2]) {
                                 endSquare.put(currPiece);
                                 fromMoveSquare.removePiece();
                                 board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1].removePiece();
-                                fromMoveSquare = endSquare;
+                                checker = endSquare;
+                                checker.setDisplay(true);
+                                currPiece = null;
+                                repaint();
                             }
                             else if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()-2]) {
                                 endSquare.put(currPiece);
                                 fromMoveSquare.removePiece();
                                 board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1].removePiece();
-                                fromMoveSquare = endSquare;
+                                checker = endSquare;
+                                checker.setDisplay(true);
+                                currPiece = null;
+                                repaint();
                             }
                             else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()-2]) {
                                 endSquare.put(currPiece);
                                 fromMoveSquare.removePiece();
                                 board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1].removePiece();
-                                fromMoveSquare = endSquare;
+                                checker = endSquare;
+                                checker.setDisplay(true);
+                                currPiece = null;
+                                repaint();
                             }
                         }
                         else {
@@ -234,6 +250,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 else {
                     endSquare.put(currPiece);
                 fromMoveSquare.removePiece();
+                }
+                if (whiteTurn) {
+                    whiteTurn = false;
+                }
+                else {
+                    whiteTurn = true;
                 }
             }
         }

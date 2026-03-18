@@ -119,7 +119,6 @@ public class Piece {
                 }
                 else {
                     colMod = (1*mod);
-                    System.out.println("well?");
                 }
             }
             if (count == jumpSquares.size()) {
@@ -176,7 +175,6 @@ public class Piece {
                 }
                 else {
                     colMod = 1*mod;
-                    System.out.println("well?");
                 }
             }
             if (count == jumpSquares.size()) {
@@ -193,7 +191,7 @@ public class Piece {
         rowMod = -1*mod;
         if (jumpSquares.size() == 0) {
             for (int x = 0; x<=3; x++) {
-                if (start.getRow()+rowMod>=0 && start.getCol()+colMod>=0 && start.getRow()+rowMod<=7 && start.getCol()+colMod<=7); {
+                if ((start.getRow()+rowMod)>=0 && (start.getCol()+colMod)>=0 && (start.getRow()+rowMod)<=7 && (start.getCol()+colMod)<=7); {
                     if (board.getSquareArray()[start.getRow()+rowMod][start.getCol()+colMod].isOccupied()) {
                     }
                     else {
@@ -209,7 +207,6 @@ public class Piece {
                 }
                 else {
                     colMod = (1*mod);
-                    System.out.println("annie r u ok");
                 }
             }
         }
