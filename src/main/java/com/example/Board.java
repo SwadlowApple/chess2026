@@ -41,6 +41,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	// Logical and graphical representations of board
 	private final Square[][] board;
     private final GameWindow g;
+    private boolean canJump = false;
+    private int repStop;
  
     //contains true if it's white's turn.
     private boolean whiteTurn;
@@ -162,9 +164,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         Square sq = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
         fromMoveSquare = sq;
-        System.out.println("1");
-        if (sq.isOccupied()) {
-            System.out.println("2");
+        if (sq.isOccupied()&& repStop == 0) {
             currPiece = sq.getOccupyingPiece();
             for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)) {
                 s.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, Color.blue));
@@ -178,9 +178,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             sq.setDisplay(false);
             System.out.println("3");
         }
-        System.out.println("4");
         repaint();
-        System.out.println("5");
     }
 
     //TO BE IMPLEMENTED!
@@ -195,11 +193,48 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 s.setBorder(null);
             }
         }
+        canJump = currPiece.canJump(board, fromMoveSquare);
         //using currPiece
         if(fromMoveSquare != null) {
-            if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) {
-                endSquare.put(currPiece);
-            fromMoveSquare.removePiece();
+            if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && whiteTurn == currPiece.getColor()&& repStop == 0) {
+                if (canJump) {
+                    repStop = 1;
+                    while(repStop == 1) {
+                        if (currPiece.canJump(board, fromMoveSquare)) {
+                            if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()+2]) {
+                                endSquare.put(currPiece);
+                                fromMoveSquare.removePiece();
+                                board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1].removePiece();
+                                fromMoveSquare = endSquare;
+                            }
+                            else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()+2]) {
+                                endSquare.put(currPiece);
+                                fromMoveSquare.removePiece();
+                                board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1].removePiece();
+                                fromMoveSquare = endSquare;
+                            }
+                            else if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()-2]) {
+                                endSquare.put(currPiece);
+                                fromMoveSquare.removePiece();
+                                board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1].removePiece();
+                                fromMoveSquare = endSquare;
+                            }
+                            else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()-2]) {
+                                endSquare.put(currPiece);
+                                fromMoveSquare.removePiece();
+                                board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1].removePiece();
+                                fromMoveSquare = endSquare;
+                            }
+                        }
+                        else {
+                            repStop = 0;
+                        }
+                    }
+                }
+                else {
+                    endSquare.put(currPiece);
+                fromMoveSquare.removePiece();
+                }
             }
         }
        
