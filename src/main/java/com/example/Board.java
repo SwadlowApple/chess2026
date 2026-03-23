@@ -99,10 +99,19 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	//since we only have one kind of piece for now you need only set the same number of pieces on either side.
 	//it's up to you how you wish to arrange your pieces.
     void initializePieces() {
-        int m = 0;
-    	for (int i =0; i<8; i++ ){
-            board[6][i].put(new Piece(false,  RESOURCES_BPAWN_PNG));
-            board[1][i].put(new Piece(true, RESOURCES_WPAWN_PNG));
+    	for (int i =0; i<3; i++){
+            if (i == 1) {
+                for (int j = 1; j<8; j+=2) {
+                    board[7-i][j].put(new Piece(false,  RESOURCES_BPAWN_PNG));
+                    board[i][j-1].put(new Piece(true, RESOURCES_WPAWN_PNG));
+                }
+            }
+            else {
+                for (int j = 0; j<8; j+=2) {
+                    board[7-i][j].put(new Piece(false,  RESOURCES_BPAWN_PNG));
+                    board[i][j+1].put(new Piece(true, RESOURCES_WPAWN_PNG));
+                }
+            }
         }
     	
         
@@ -277,7 +286,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 else if (repStop == 0) {
                     whiteTurn = true;
                 }
-                if (((endSquare.getRow() == 0 && !currPiece.getColor()) || (endSquare.getRow() == 8 && currPiece.getColor())) && repStop == 0) {
+                if (((endSquare.getRow() == 0 && !currPiece.getColor()) || (endSquare.getRow() == 7 && currPiece.getColor())) && repStop == 0) {
                     currPiece.crown();
                 }
             }
