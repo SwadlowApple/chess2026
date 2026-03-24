@@ -57,18 +57,21 @@ public class Piece {
         
         g.drawImage(this.img, x, y, null);
     }
+    //Precondition: must have a squarearray representing a board and a square in that array, which must be occupied by a checker, as the inputs
+    //Postcondition: Returns a boolean based on if the piece can jump from the square it's on
     public Boolean canJump(Square[][] board, Square start) {
         Square b = start;
         int rowMod = -1 * mod;
         int colMod = -1 * mod;
             for (int z = 0; z<=3; z++) {
-                //up and to the left is in bounds for taking jumps
+                //checks diagonals to see if we have space in that direction
                 if(b.getRow()+(2*rowMod)>=0 && b.getCol()+(2*colMod)>=0 && b.getRow()+(2*rowMod)<=7 && b.getCol()+(2*colMod)<=7){
-                    //there is a piece of opposite color down and to the right of us and no piece preventing a jump
+                    //checks to see if there are pieces so we can jump, and if we can returns true
                     if(board[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && board[b.getRow()+rowMod][b.getCol()+colMod].getOccupyingPiece().getColor()!=color && !board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
                         return true;
                     }
                 }
+                //works with for loop to get all posibilities
                 if (colMod == (1*mod) && king) {
                     colMod = -1*mod;
                     rowMod = 1*mod;
@@ -77,6 +80,7 @@ public class Piece {
                     colMod = (1*mod);
                 }
             }
+            //if we can't jump, returns false as default
     return false;
 }
     
@@ -84,6 +88,7 @@ public class Piece {
     // TO BE IMPLEMENTED!
     //return a list of every square that is "controlled" by this piece. A square is controlled
     //if the piece capture into it legally.
+    //Precondition: Input of an Arraylist of squares making up a board, and 
     public ArrayList<Square> getControlledSquares(Square[][] board, Square start) {
         ArrayList<Square> jumpSquares = new ArrayList<>();
         ArrayList<Square> allSquares = new ArrayList<>();
@@ -93,12 +98,14 @@ public class Piece {
         int y = 0;
         int rowMod = -1 * mod;
         int colMod = -1 * mod;
+        //The while loop is to keep it active to check all posibilities for jumps
         while(m==0) {
             for (int z = 0; z<=3; z++) {
-                //up and to the left is in bounds for taking jumps
+                //checks if it can jump without going out of bounds
                 if(b.getRow()+(2*rowMod)>=0 && b.getCol()+(2*colMod)>=0 && b.getRow()+(2*rowMod)<=7 && b.getCol()+(2*colMod)<=7){
-                    //there is a piece of opposite color down and to the right of us and no piece preventing a jump
+                    //checks if there is a piece of opposite color one diagonal of us and no piece preventing a jump 2 diagonal of us so we can jumps
                     if(board[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && board[b.getRow()+rowMod][b.getCol()+colMod].getOccupyingPiece().getColor()!=color && !board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
+                        //For Loops check to make sure we don't already have it so this doesn't go infinite and takes less spaces
                         for (int x = 0; x < jumpSquares.size(); x++) {
                             if(board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]==jumpSquares.get(x)) {
                                 y++;
@@ -107,13 +114,39 @@ public class Piece {
                                 y++;
                             }
                         }
+                        for (int x = 0; x < allSquares.size(); x++) {
+                            if(board[b.getRow()+rowMod][b.getCol()+colMod]==allSquares.get(x)) {
+                                y++;
+                            }
+                            else if(board[b.getRow()+rowMod][b.getCol()+colMod]==board[start.getRow()][start.getCol()]) {
+                                y++;
+                            }
+                        }
+                        //says that if we don't have it we add it and we check for jumps there
                         if (y == 0) {
                             jumpSquares.add(board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)]);
                             allSquares.add(board[b.getRow()+(rowMod)][b.getCol()+(colMod)]);
                         }
                         y =0;
                     }
+                    //checks if we threaten where pieces can move
+                    if (!board[b.getRow()+rowMod][b.getCol()+colMod].isOccupied() && !board[b.getRow()+(2*rowMod)][b.getCol()+(2*colMod)].isOccupied()) {
+                        for (int x = 0; x < allSquares.size(); x++) {
+                            if(board[b.getRow()+rowMod][b.getCol()+colMod]==allSquares.get(x)) {
+                                y++;
+                            }
+                            else if(board[b.getRow()+rowMod][b.getCol()+colMod]==board[start.getRow()][start.getCol()]) {
+                                y++;
+                            }
+                        }
+                        //says that if we don't have it we add it
+                        if (y == 0) {
+                            allSquares.add(board[b.getRow()+(rowMod)][b.getCol()+(colMod)]);
+                        }
+                        y =0;
+                    }
                 }
+                //The code uses this to for loop through all posibilities
                 if (colMod == (1*mod) && king) {
                     colMod = -1*mod;
                     rowMod = 1*mod;
@@ -122,6 +155,7 @@ public class Piece {
                     colMod = (1*mod);
                 }
             }
+            //Checks if we ran out of options, and if we did, returns
             if (count == jumpSquares.size()) {
                 m++;
             }
@@ -132,6 +166,7 @@ public class Piece {
             rowMod = -1*mod;
             colMod = -1*mod;
         }
+        //returns the threatened squares
      return allSquares;
     }
     
@@ -142,6 +177,9 @@ public class Piece {
     //returns an arraylist of squares which are legal to move to
     //please note that your piece must have some sort of logic. Just being able to move to every square on the board is not
     //going to score any points.
+    //Precondition: Inputs must be a board and a start square on that board with a checker on in
+    //Postcondition: returns all the places that on the board where the piece could legally move on its turn 
+    // in an Arraylist of Squares that are on the board
     public ArrayList<Square> getLegalMoves(Board board, Square start){
         ArrayList<Square> jumpSquares = new ArrayList<>();
         ArrayList<Square> allSquares = new ArrayList<>();

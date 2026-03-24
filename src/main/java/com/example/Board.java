@@ -98,6 +98,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	//set up the board such that the black pieces are on one side and the white pieces are on the other.
 	//since we only have one kind of piece for now you need only set the same number of pieces on either side.
 	//it's up to you how you wish to arrange your pieces.
+    //Precondition: created board before calling this
+    //Postcondition: creates checkers pieces correctly for all spaces on a checker board, assuming that you would be playing black
     void initializePieces() {
     	for (int i =0; i<3; i++){
             if (i == 1) {
@@ -199,6 +201,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     //should move the piece to the desired location only if this is a legal move.
     //use the pieces "legal move" function to determine if this move is legal, then complete it by
     //moving the new piece to it's new board location. 
+    //Precondition: a mouse event is used as the only input
+    //Postcondition: lets the user move the piece that they have picked up to the release square, claiming pieces where it should, provided that they picked up a piece 
+    // and the end square is a legal square for the piece to move to, otherwise doing nothing.
     @Override
     public void mouseReleased(MouseEvent e) {
         Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
