@@ -48,7 +48,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private boolean whiteTurn;
 
     //if the player is currently dragging a piece this variable contains it.
-    Piece currPiece;
+    Checker currPiece;
     private Square fromMoveSquare;
     private Square checker;
     
@@ -104,14 +104,14 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     	for (int i =0; i<3; i++){
             if (i == 1) {
                 for (int j = 1; j<8; j+=2) {
-                    board[7-i][j].put(new Piece(false,  RESOURCES_BPAWN_PNG));
-                    board[i][j-1].put(new Piece(true, RESOURCES_WPAWN_PNG));
+                    board[7-i][j].put(new Checker(false,  RESOURCES_BPAWN_PNG));
+                    board[i][j-1].put(new Checker(true, RESOURCES_WPAWN_PNG));
                 }
             }
             else {
                 for (int j = 0; j<8; j+=2) {
-                    board[7-i][j].put(new Piece(false,  RESOURCES_BPAWN_PNG));
-                    board[i][j+1].put(new Piece(true, RESOURCES_WPAWN_PNG));
+                    board[7-i][j].put(new Checker(false,  RESOURCES_BPAWN_PNG));
+                    board[i][j+1].put(new Checker(true, RESOURCES_WPAWN_PNG));
                 }
             }
         }
@@ -128,11 +128,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return whiteTurn;
     }
 
-    public void setCurrPiece(Piece p) {
+    public void setCurrPiece(Checker p) {
         this.currPiece = p;
     }
 
-    public Piece getCurrPiece() {
+    public Checker getCurrPiece() {
         return this.currPiece;
     }
 
@@ -214,7 +214,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
         
         //using currPiece
-        if(fromMoveSquare != null) {
+        if(fromMoveSquare != null && currPiece!= null && currPiece instanceof Checker) {
             canJump = currPiece.canJump(board, checker);
             if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && fromMoveSquare == checker && whiteTurn == currPiece.getColor()) {
                 if (canJump) {

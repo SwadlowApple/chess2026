@@ -11,7 +11,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 //you will need to implement two functions in this file.
-public class Piece {
+public class Checker {
     private boolean king = false;
     private boolean jumped = false;
     private final boolean color;
@@ -19,7 +19,7 @@ public class Piece {
     private int mod;
     private boolean canJump;
     
-    public Piece(boolean isWhite, String img_file) {
+    public Checker(boolean isWhite, String img_file) {
         canJump = false;
         this.color = isWhite;
          if (isWhite) {
