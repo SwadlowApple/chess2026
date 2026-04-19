@@ -34,7 +34,7 @@ public class GameWindow {
         
 
         try {
-            Image whiteImg = ImageIO.read(getClass().getResource("wp.png"));
+            Image whiteImg = ImageIO.read(new File("/workspaces/chess2026/src/main/java/com/example/Pictures/wpawn.png"));
             gameWindow.setIconImage(whiteImg);
         } catch (Exception e) {
             System.out.println("Game file wp.png not found");

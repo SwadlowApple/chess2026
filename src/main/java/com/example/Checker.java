@@ -11,15 +11,22 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 //you will need to implement two functions in this file.
-public class Checker {
+public class Checker extends Piece {
     private boolean king = false;
     private boolean jumped = false;
     private final boolean color;
     private BufferedImage img;
     private int mod;
     private boolean canJump;
+    //Name: Fouad Kadry
+    //Piece name: Checker
+    //It jumps over pieces, andd claims them, moving forward until it reaches the end of the board, then 
+    // being crowned and being able to jump anywhere. It can also move one diagonally, but only if
+    //it can't claim jump. If it can it must do so repeatedly until it can't, no matter if you do
+    // or don't want to stop
     
     public Checker(boolean isWhite, String img_file) {
+        super(isWhite, img_file);
         canJump = false;
         this.color = isWhite;
          if (isWhite) {
@@ -28,14 +35,7 @@ public class Checker {
          else {
             mod = 1;
          }
-        try {
-            if (this.img == null) {
-                System.out.println("trying to open "+img_file);
-                this.img = ImageIO.read(new File(img_file));
-            }
-          } catch (IOException e) {
-            System.out.println("File not found: " + e.getMessage());
-          }
+       
     }
     
     
@@ -43,6 +43,22 @@ public class Checker {
     
     public boolean getColor() {
         return color;
+    }
+    public String toString() {
+        if (mod == -1) {
+            if (king) {
+                return ("I am a white crowned checker");
+            } else {
+                return ("I am a white uncrowned checker");
+            }
+
+        } else {
+            if (king) {
+                return ("I am a black crowned checker");
+            } else {
+                return ("I am a black uncrowned checker");
+            }
+        }
     }
     public void crown() {
         king = true;
