@@ -34,7 +34,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	//private static final String RESOURCES_BQUEEN_PNG = path+"bqueen.png";
 	//private static final String RESOURCES_WQUEEN_PNG = path+"wqueen.png";
 	private static final String RESOURCES_WPAWN_PNG = path+"bknight.png";
-	private static final String RESOURCES_BPAWN_PNG = path+"brook.png";
+	private static final String RESOURCES_BPAWN_PNG = path+"brookxc.png";
 
     
 	
@@ -135,39 +135,32 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     public Checker getCurrPiece() {
         return this.currPiece;
     }
-
+    public boolean isInCheck(boolean turn) {
+        return false;
+    }
     @Override
     public void paintComponent(Graphics g) {
-     Image backgroundImage = null; 
-     URL imageUrl = null;
-     if (currPiece != null) {
-      imageUrl = getClass().getResource(path+currPiece.getImage());
-     }
-
-     if (imageUrl != null) {
-            // This is the cleanest way to get an AWT Image object from a URL
-            backgroundImage = Toolkit.getDefaultToolkit().createImage(imageUrl);
-        } 
-    
-
+        super.paintComponent(g);
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 Square sq = board[x][y];
                 if(sq == fromMoveSquare)
-                	 sq.setBorder(BorderFactory.createLineBorder(Color.blue));
-                sq.paintComponent(g);
-               // System.out.println("Painting square at " + x + ", " + y);   
-                
+                     sq.setBorder(BorderFactory.createLineBorder(Color.blue));
             }
         }
-    	if (currPiece != null) {
-            if ((currPiece.getColor() && whiteTurn)
-                    || (!currPiece.getColor()&& !whiteTurn)) {
-                final Image img = currPiece.getImage();
-                g.drawImage(img, currX, currY, null);
-            }
-        }
+        
     }
+    @Override
+public void paint(Graphics g) {
+    super.paint(g); // paints Board + all Squares FIRST
+
+    // NOW draw dragged piece on top
+    if (currPiece != null) {
+        Image img = currPiece.getImage();
+        g.drawImage(img, currX - 24, currY - 24, 48, 48, null);
+    }
+}
+
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -204,6 +197,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     //Precondition: a mouse event is used as the only input
     //Postcondition: lets the user move the piece that they have picked up to the release square, claiming pieces where it should, provided that they picked up a piece 
     // and the end square is a legal square for the piece to move to, otherwise doing nothing.
+    
     @Override
     public void mouseReleased(MouseEvent e) {
         Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
@@ -212,7 +206,20 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 s.setBorder(null);
             }
         }
-        
+        if(fromMoveSquare != null && currPiece!= null) {
+            fromMoveSquare.setDisplay(true);
+            if(currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) {
+                Piece captured = endSquare.getOccupyingPiece();
+                endSquare.put(currPiece);
+                fromMoveSquare.removePiece();
+                if(isInCheck(whiteTurn)) {
+                    fromMoveSquare.put(currPiece);
+                    endSquare.put(captured);
+                } else {
+                    whiteTurn = !whiteTurn;
+                }
+            }
+        }
         //using currPiece
         if(fromMoveSquare != null && currPiece!= null && currPiece instanceof Checker) {
             canJump = currPiece.canJump(board, checker);

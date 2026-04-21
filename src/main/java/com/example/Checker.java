@@ -63,16 +63,7 @@ public class Checker extends Piece {
     public void crown() {
         king = true;
     }
-    public Image getImage() {
-        return img;
-    }
     
-    public void draw(Graphics g, Square currentSquare) {
-        int x = currentSquare.getX();
-        int y = currentSquare.getY();
-        
-        g.drawImage(this.img, x, y, null);
-    }
     //Precondition: must have a squarearray representing a board and a square in that array, which must be occupied by a checker, as the inputs
     //Postcondition: Returns a boolean based on if the piece can jump from the square it's on
     public Boolean canJump(Square[][] board, Square start) {

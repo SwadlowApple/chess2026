@@ -27,10 +27,9 @@ public class Piece {
         return img;
     }
     public void draw(Graphics g, Square currentSquare) {
-        int x = currentSquare.getX();
-        int y = currentSquare.getY();
-        g.drawImage(this.img, x, y, null);
+     g.drawImage(this.img, 0, 0, currentSquare.getWidth(), currentSquare.getHeight(), null);
     }
+
     // to be overriden in each subclass
     public ArrayList<Square> getLegalMoves(Board b, Square currentSquare) {
         return null;
