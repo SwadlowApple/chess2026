@@ -34,7 +34,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	//private static final String RESOURCES_BQUEEN_PNG = path+"bqueen.png";
 	//private static final String RESOURCES_WQUEEN_PNG = path+"wqueen.png";
 	private static final String RESOURCES_WPAWN_PNG = path+"bknight.png";
-	private static final String RESOURCES_BPAWN_PNG = path+"brookxc.png";
+	private static final String RESOURCES_BPAWN_PNG = path+"bpawn.png";
 
     
 	
@@ -48,7 +48,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private boolean whiteTurn;
 
     //if the player is currently dragging a piece this variable contains it.
-    Checker currPiece;
+    Piece currPiece;
     private Square fromMoveSquare;
     private Square checker;
     
@@ -128,11 +128,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return whiteTurn;
     }
 
-    public void setCurrPiece(Checker p) {
+    public void setCurrPiece(Piece p) {
         this.currPiece = p;
     }
 
-    public Checker getCurrPiece() {
+    public Piece getCurrPiece() {
         return this.currPiece;
     }
     public boolean isInCheck(boolean turn) {
@@ -222,11 +222,11 @@ public void paint(Graphics g) {
         }
         //using currPiece
         if(fromMoveSquare != null && currPiece!= null && currPiece instanceof Checker) {
-            canJump = currPiece.canJump(board, checker);
+            canJump = ((Checker)currPiece).canJump(board, checker);
             if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && fromMoveSquare == checker && whiteTurn == currPiece.getColor()) {
                 if (canJump) {
                     repStop = 1;
-                            if (currPiece != null && currPiece.canJump(board, checker)) {
+                            if (currPiece != null && ((Checker)currPiece).canJump(board, checker)) {
                                 if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[checker.getRow()+2][checker.getCol()+2]) {
                                     System.out.println("1");
                                     endSquare.put(currPiece);
@@ -236,7 +236,7 @@ public void paint(Graphics g) {
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
-                                    if (!currPiece.canJump(board, endSquare)) {
+                                    if (!((Checker)currPiece).canJump(board, endSquare)) {
                                         System.out.println("2");
                                         repStop = 0;
                                     }
@@ -250,7 +250,7 @@ public void paint(Graphics g) {
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
-                                    if (!currPiece.canJump(board, endSquare)) {
+                                    if (!((Checker)currPiece).canJump(board, endSquare)) {
                                         System.out.println("2");
                                         repStop = 0;
                                     }
@@ -264,7 +264,7 @@ public void paint(Graphics g) {
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
-                                    if (!currPiece.canJump(board, endSquare)) {
+                                    if (!((Checker)currPiece).canJump(board, endSquare)) {
                                         System.out.println("2");
                                         repStop = 0;
                                     }
@@ -278,7 +278,7 @@ public void paint(Graphics g) {
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
-                                    if (!currPiece.canJump(board, endSquare)) {
+                                    if (!((Checker)currPiece).canJump(board, endSquare)) {
                                         System.out.println("2");
                                         repStop = 0;
                                     }
@@ -299,7 +299,7 @@ public void paint(Graphics g) {
                     whiteTurn = true;
                 }
                 if (((endSquare.getRow() == 0 && !currPiece.getColor()) || (endSquare.getRow() == 7 && currPiece.getColor())) && repStop == 0) {
-                    currPiece.crown();
+                    ((Checker)currPiece).crown();
                 }
             }
             else {
