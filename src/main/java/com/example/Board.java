@@ -136,6 +136,13 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         return this.currPiece;
     }
     public boolean isInCheck(boolean turn) {
+        for(int i = 0; i<=7; i++) {
+            for(int j = 0; j<=7; j++) {
+                if(board[i][j].isOccupied() && board[i][j].getOccupyingPiece().getColor()!=turn) {
+                    if()
+                }
+            }
+        }
         return false;
     }
     @Override
