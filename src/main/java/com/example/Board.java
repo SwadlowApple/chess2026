@@ -12,6 +12,8 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.net.URL;
 import java.awt.Toolkit;
 
@@ -40,17 +42,28 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	
 	// Logical and graphical representations of board
 	private final Square[][] board;
+    ArrayList<Square> controlled = new ArrayList<>();
+    ArrayList<Square> takenPieceSquares = new ArrayList<>();
+    ArrayList<Piece> takenPieces = new ArrayList<>();
     private final GameWindow g;
     private boolean canJump = false;
     private int repStop;
+    private boolean checked = false;
+    private int jumpCounter = 0;
+    Threads threadJumps = new Threads();
  
     //contains true if it's white's turn.
     private boolean whiteTurn;
 
     //if the player is currently dragging a piece this variable contains it.
+    ExecutorService pool = Executors.newCachedThreadPool();
     Piece currPiece;
+    Piece tempPiece;
+    private Square noodleSquare;
     private Square fromMoveSquare;
     private Square checker;
+    private Square claimSquare;
+    private Square endSquare;
     
     //used to keep track of the x/y coordinates of the mouse.
     private int currX;
@@ -139,11 +152,27 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         for(int i = 0; i<=7; i++) {
             for(int j = 0; j<=7; j++) {
                 if(board[i][j].isOccupied() && board[i][j].getOccupyingPiece().getColor()!=turn) {
-                    if()
+                    controlled = board[i][j].getOccupyingPiece().getControlledSquares(board, board[i][j]);
+                    for(int z = 0; z<controlled.size(); z++) {
+                        if(controlled.get(z).isOccupied() && controlled.get(z).getOccupyingPiece() instanceof King 
+                        && controlled.get(z).getOccupyingPiece().getColor() != board[i][j].getColor()) {
+                            return true;
+                        }
+                    }
                 }
             }
         }
         return false;
+    }
+    public void checkerRevert() {
+        tempPiece = endSquare.getOccupyingPiece();
+        endSquare.removePiece();
+        noodleSquare.put(tempPiece);
+        for(int i = takenPieceSquares.size()-1; i >= 0; i--) {
+            takenPieceSquares.get(i).put(takenPieces.get(i));
+            takenPieceSquares.remove(i);
+            takenPieces.remove(i);
+        }
     }
     @Override
     public void paintComponent(Graphics g) {
@@ -207,24 +236,10 @@ public void paint(Graphics g) {
     
     @Override
     public void mouseReleased(MouseEvent e) {
-        Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
+        endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
         for (Square[] row: board) {
             for(Square s: row) {
                 s.setBorder(null);
-            }
-        }
-        if(fromMoveSquare != null && currPiece!= null) {
-            fromMoveSquare.setDisplay(true);
-            if(currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) {
-                Piece captured = endSquare.getOccupyingPiece();
-                endSquare.put(currPiece);
-                fromMoveSquare.removePiece();
-                if(isInCheck(whiteTurn)) {
-                    fromMoveSquare.put(currPiece);
-                    endSquare.put(captured);
-                } else {
-                    whiteTurn = !whiteTurn;
-                }
             }
         }
         //using currPiece
@@ -232,61 +247,68 @@ public void paint(Graphics g) {
             canJump = ((Checker)currPiece).canJump(board, checker);
             if(currPiece != null && currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare) && fromMoveSquare == checker && whiteTurn == currPiece.getColor()) {
                 if (canJump) {
+                    if(repStop == 0) {
+                        noodleSquare = fromMoveSquare;
+                        tempPiece = currPiece;
+                    }
                     repStop = 1;
                             if (currPiece != null && ((Checker)currPiece).canJump(board, checker)) {
                                 if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[checker.getRow()+2][checker.getCol()+2]) {
-                                    System.out.println("1");
                                     endSquare.put(currPiece);
                                     fromMoveSquare.removePiece();
+                                    takenPieces.add(board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1].getOccupyingPiece());
+                                    takenPieceSquares.add(board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1]);
                                     board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()+1].removePiece();
                                     checker = endSquare;
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
                                     if (!((Checker)currPiece).canJump(board, endSquare)) {
-                                        System.out.println("2");
                                         repStop = 0;
+                                        if(isInCheck(whiteTurn)) {
+                                            checkerRevert();
+                                        }
                                     }
                                 }
                                 else if (fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()+2 <=7 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()+2]) {
-                                    System.out.println("1");
                                     endSquare.put(currPiece);
                                     fromMoveSquare.removePiece();
+                                    takenPieces.add(board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1].getOccupyingPiece());
+                                    takenPieceSquares.add(board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1]);
                                     board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()+1].removePiece();
                                     checker = endSquare;
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
                                     if (!((Checker)currPiece).canJump(board, endSquare)) {
-                                        System.out.println("2");
                                         repStop = 0;
                                     }
                                 }
                                 else if (fromMoveSquare.getRow()+2 <= 7 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()+2][fromMoveSquare.getCol()-2]) {
-                                    System.out.println("1");
                                     endSquare.put(currPiece);
                                     fromMoveSquare.removePiece();
+                                    takenPieces.add(board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1].getOccupyingPiece());
+                                    takenPieceSquares.add(board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1]);
                                     board[fromMoveSquare.getRow()+1][fromMoveSquare.getCol()-1].removePiece();
                                     checker = endSquare;
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
                                     if (!((Checker)currPiece).canJump(board, endSquare)) {
-                                        System.out.println("2");
                                         repStop = 0;
                                     }
                                 }
                                 else if(fromMoveSquare.getRow()-2 >= 0 && fromMoveSquare.getCol()-2 >= 0 &&endSquare == board[fromMoveSquare.getRow()-2][fromMoveSquare.getCol()-2]) {
-                                    System.out.println("1");
                                     endSquare.put(currPiece);
                                     fromMoveSquare.removePiece();
+                                    takenPieces.add(board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1].getOccupyingPiece());
+                                    takenPieceSquares.add(board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1]);
                                     board[fromMoveSquare.getRow()-1][fromMoveSquare.getCol()-1].removePiece();
                                     checker = endSquare;
                                     checker.setDisplay(true);
                                     //currPiece = null;
                                     repaint();
                                     if (!((Checker)currPiece).canJump(board, endSquare)) {
-                                        System.out.println("2");
                                         repStop = 0;
                                     }
                                 }
@@ -299,10 +321,10 @@ public void paint(Graphics g) {
                     endSquare.put(currPiece);
                     fromMoveSquare.removePiece();
                 }
-                if (whiteTurn && repStop == 0) {
+                if (!checked && whiteTurn && repStop == 0) {
                     whiteTurn = false;
                 }
-                else if (repStop == 0) {
+                else if (!checked && repStop == 0) {
                     whiteTurn = true;
                 }
                 if (((endSquare.getRow() == 0 && !currPiece.getColor()) || (endSquare.getRow() == 7 && currPiece.getColor())) && repStop == 0) {
